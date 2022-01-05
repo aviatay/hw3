@@ -19,6 +19,7 @@ public class ToDoList implements Cloneable{
 
     public ToDoList createUncompletedList() throws CloneNotSupportedException{
         ToDoList clonedList = this.clone();
+
         for(Task currTask : clonedList.taskList){
             if (currTask.completed)
                 clonedList.taskList.remove(currTask);

@@ -2,7 +2,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws CloneNotSupportedException{
         ToDoList l1 = new ToDoList();
         for (Task t : l1) {
             System.out.println("You should not reach here!");

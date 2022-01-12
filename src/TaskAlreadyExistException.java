@@ -1,6 +1,6 @@
-public class TaskAlreadyExistException extends RuntimeException{
+class TaskAlreadyExistsException extends RuntimeException{
 
-    public TaskAlreadyExistException(){
+    public TaskAlreadyExistsException(){
         super("Cannot add the task!");
     }
 

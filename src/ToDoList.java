@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 public class ToDoList implements Cloneable, TaskIterable {
     private ArrayList<Task> taskList;
+    private ScanningType defaultScanningType = ScanningType.ALL;
 
     public ToDoList() {
         taskList = new ArrayList<>();
@@ -25,12 +26,9 @@ public class ToDoList implements Cloneable, TaskIterable {
         for (Task currTask : taskList) {
             if (currTask.getTaskDescription().compareTo(task.taskDescription) == 0)
                 throw new TaskAlreadyExistsException();
-            else {
-                taskList.add(task);
-                return;
-            }
-
         }
+        taskList.add(task);
+        return;
     }
 
     public ToDoList createUncompletedList() throws CloneNotSupportedException {
@@ -38,7 +36,7 @@ public class ToDoList implements Cloneable, TaskIterable {
         ToDoList clonedList = new ToDoList();
        /* if (clonedList == null)
             return null;*/
-        for (Task currTask : this.taskList) {
+        for (Task currTask : taskList) {
             if (currTask.completed)
                 continue;
                 //clonedList.taskList.remove(currTask);
@@ -52,7 +50,7 @@ public class ToDoList implements Cloneable, TaskIterable {
 
     public ToDoList createCompletedList() throws CloneNotSupportedException {
         ToDoList clonedList = new ToDoList();
-        for (Task currTask : clonedList.taskList) {
+        for (Task currTask : taskList) {
             if (!currTask.completed)
                 continue;
             else {
@@ -67,8 +65,15 @@ public class ToDoList implements Cloneable, TaskIterable {
     protected ToDoList clone() throws CloneNotSupportedException {
         try {
             //ToDoList temp = (ToDoList) super.clone();
+            ///temp.taskList = (ArrayList<Task>) temp.taskList.clone();
+            ToDoList temp = new ToDoList();
+            for (Task curr : taskList){
+                temp.taskList.add(curr.clone());
+               // curr = (Task)curr.clone();
+            }
+            //ToDoList temp = (ToDoList) super.clone();
             //temp.taskList
-            return (ToDoList) super.clone();
+            return temp;
         } catch (CloneNotSupportedException cloneException) {
             return null;
         }
@@ -79,10 +84,11 @@ public class ToDoList implements Cloneable, TaskIterable {
         String fullToDoList  = "[";
 
         for (Task curr : taskList) {
-            if (taskList.get(taskList.size() - 1) == curr)
-                fullToDoList = fullToDoList + curr.toString();
-            else
-                fullToDoList = fullToDoList + curr.toString() + ", ";
+            if(curr.isCompleted())
+                continue;
+            else if (fullToDoList.compareTo("[") != 0)
+                fullToDoList = fullToDoList + ", ";
+            fullToDoList = fullToDoList + "(" + curr.toString() + ")";
         }
         fullToDoList = fullToDoList + "]";
         return fullToDoList;
@@ -91,37 +97,55 @@ public class ToDoList implements Cloneable, TaskIterable {
     @Override
     public boolean equals(Object obj) {
         ToDoList other = (ToDoList) obj;
-        if (other == null || (taskList.size() != other.taskList.size()))
+        int counterEquals = 0;
+        int counterFirstUnCompleted = 0;
+        int counterSecondUnCompleted = 0;
+        if (other == null)
+            return false;
+        for (Task currFirstList : taskList){
+            if(!currFirstList.isCompleted())
+                counterFirstUnCompleted++;
+        }
+        for (Task currSecondList : other.taskList){
+            if(!currSecondList.isCompleted())
+                counterSecondUnCompleted++;
+        }
+        if (counterFirstUnCompleted != counterSecondUnCompleted)
             return false;
         for (Task currFirstList : taskList) {
+            if (currFirstList.isCompleted())
+                continue;
             for (Task currSecondList : other.taskList) {
-                if (currFirstList.equals(currSecondList))
-                    break;
+                if (currSecondList.isCompleted())
+                    continue;
+                if (currFirstList.equals(currSecondList)){
+                    counterEquals++;
+                }
             }
-            return false;
         }
-        return true;
+        if (counterEquals == counterSecondUnCompleted)
+            return true;
+
+        return false;
     }
 
     public void setScanningType(ScanningType type) {
-        Iterator<Task> iterator = taskList.iterator();
-        while (iterator.hasNext()) {
-            if (type == ScanningType.COMPLETED){
-                 createUnCompletedList();
-
-            }
-
-            /*if ((iterator.next().completed) && (type == ScanningType.UNCOMPLETED))
-                continue;
-            if ((!iterator.next().completed) && (type == ScanningType.COMPLETED))
-            continue;*/
-        }
-
+        defaultScanningType = type;
     }
 
     public Iterator<Task> iterator() {
-        return new ToDoListIterator(this);
-        //return taskList.iterator();
+        ToDoList temp = this;
+        try {
+            if (defaultScanningType == ScanningType.COMPLETED)
+                temp = createCompletedList();
+            if (defaultScanningType == ScanningType.UNCOMPLETED)
+                temp = createUncompletedList();
+
+        }
+        catch (CloneNotSupportedException e){
+            return null;
+        }
+        return new ToDoListIterator(temp);
     }
 
 }

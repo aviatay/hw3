@@ -1,17 +1,12 @@
 import java.util.Iterator;
 
-public class ToDoListIterator implements Iterable<Task>{
+public class ToDoListIterator implements Iterator<Task>{
     private int counter = 0;
     private ScanningType defaultType = ScanningType.ALL;
     private ToDoList list;
 
     public ToDoListIterator(ToDoList list){
         this.list = list;
-    }
-
-    public Iterator<Task> iterator() {
-        //return new ToDoListIterator();
-        return list.iterator();
     }
 
     public boolean hasNext() {

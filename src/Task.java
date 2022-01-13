@@ -1,3 +1,4 @@
+import java.text.*;
 import java.util.Date;
 
 public class Task implements Cloneable {
@@ -26,6 +27,9 @@ public class Task implements Cloneable {
     @Override
     protected Task clone() throws CloneNotSupportedException {
         try {
+           // Task temp = (Task)super.clone();
+           // temp.taskDescription = temp.taskDescription.clone();
+
             return (Task)super.clone();
         }
         catch(CloneNotSupportedException cloneException) {
@@ -35,8 +39,8 @@ public class Task implements Cloneable {
 
     @Override
     public String toString() {
-        String dueDateStr = dueDate.getDay() + "." + dueDate.getMonth() + "." + dueDate.getYear();
-        return "(" + taskDescription + ", " + dueDateStr + ")";
+        SimpleDateFormat dueDateStr = new SimpleDateFormat("dd.MM.yyyy");
+        return taskDescription + ", " + dueDateStr.format(this.dueDate);
     }
 
     @Override
@@ -46,13 +50,13 @@ public class Task implements Cloneable {
         if (other == null)
             return false;
 
-        if((taskDescription.compareTo(other.taskDescription) == 0) && dueDate.equals(other.dueDate))
+        if((taskDescription.compareTo(other.taskDescription) == 0) && (dueDate.compareTo(other.dueDate) == 0))
             return true;
 
         return false;
     }
 
     public void setAsComplete(){
-        completed = true;
+        this.completed = true;
     }
 }

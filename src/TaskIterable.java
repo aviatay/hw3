@@ -1,4 +1,8 @@
 public interface TaskIterable extends Iterable<Task> {
-    public void setScanningType(ScanningType type);
+    /**
+     * Sets the scanning type
+     * @param type The scanning type
+     */
+    void setScanningType(ScanningType type);
 
 }
